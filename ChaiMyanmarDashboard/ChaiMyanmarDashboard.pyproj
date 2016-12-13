@@ -47,7 +47,8 @@
     <None Include="chai-myanmar-dashboard - Web Deploy.pubxml" />
     <Content Include="ChaiMyanmarDashboard\static\scripts\d3.js" />
     <Content Include="ChaiMyanmarDashboard\static\scripts\d3.min.js" />
-    <Content Include="ChaiMyanmarDashboard\templates\plot.html" />
+    <Content Include="ChaiMyanmarDashboard\static\scripts\dashboard.js" />
+    <Content Include="ChaiMyanmarDashboard\templates\dashboard.html" />
     <Content Include="requirements.txt" />
     <Content Include="ChaiMyanmarDashboard\static\content\bootstrap.css" />
     <Content Include="ChaiMyanmarDashboard\static\content\bootstrap.min.css" />
@@ -71,9 +72,6 @@
     <Content Include="ChaiMyanmarDashboard\static\scripts\respond.js" />
     <Content Include="ChaiMyanmarDashboard\static\scripts\respond.min.js" />
     <Content Include="ChaiMyanmarDashboard\static\scripts\_references.js" />
-    <Content Include="ChaiMyanmarDashboard\templates\about.html" />
-    <Content Include="ChaiMyanmarDashboard\templates\contact.html" />
-    <Content Include="ChaiMyanmarDashboard\templates\index.html" />
     <Content Include="ChaiMyanmarDashboard\templates\layout.html" />
   </ItemGroup>
   <ItemGroup>

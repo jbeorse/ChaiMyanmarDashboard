@@ -7,6 +7,7 @@ from flask import render_template, jsonify, request
 from ChaiMyanmarDashboard import app
 import pypyodbc
 from pprint import pprint
+import datetime
 
 """Database Connection String"""
 connectionString = ''
@@ -57,19 +58,12 @@ avgTatNHLLabCommand = 'SELECT AVG(DATEDIFF(day,[SampleCollectedDate],[SampleShip
 avgTatPHLLabCommand = 'SELECT AVG(DATEDIFF(day,[SampleCollectedDate],[SampleShipmentDate])),AVG(DATEDIFF(day,[SampleShipmentDate],[RecievedDate])),AVG(DATEDIFF(day,[RecievedDate],[RegistrationDate])),AVG(DATEDIFF(day,[RegistrationDate],[FinalReportDate])),AVG(DATEDIFF(day,[FinalReportDate],[DispachedDate])) FROM [dbo].[EIDSummery] WHERE [Lab] = \'PHL\';'
 avgTatUNIONLabCommand = 'SELECT AVG(DATEDIFF(day,[SampleCollectedDate],[SampleShipmentDate])),AVG(DATEDIFF(day,[SampleShipmentDate],[RecievedDate])),AVG(DATEDIFF(day,[RecievedDate],[RegistrationDate])),AVG(DATEDIFF(day,[RegistrationDate],[FinalReportDate])),AVG(DATEDIFF(day,[FinalReportDate],[DispachedDate])) FROM [dbo].[EIDSummery] WHERE [Lab] = \'UNION\';'
 
+"""Epoch time"""
+epoch = datetime.datetime.utcfromtimestamp(0)
 
 @app.route('/')
 @app.route('/home')
 def home():
-    """Renders the home page."""
-    return render_template(
-        'index.html',
-        title='Home Page',
-        year=datetime.now,
-    )
-
-@app.route('/plot')
-def plot():
     """Renders the plot page."""
 
     connection = pypyodbc.connect(connectionString)
@@ -121,20 +115,7 @@ def plot():
 
     connection.close()
 
-    # This is what the result data looks like
-    matrix = [
-        [1, 5871, 8916, 2868],
-        [2, 10048, 2060, 6171],
-        [3, 16145, 8090, 8045],
-        [4, 990,  940, 6907],
-        [5, 450, 430, 5000],
-        [6, 100, 10000, 1000],
-    ];
-
-    return render_template(
-        'plot.html',
-        data_arr=matrix,
-        )
+    return render_template('dashboard.html')
         
 def runQuery(cursor, command):
     cursor.execute(command)
@@ -143,9 +124,17 @@ def runQuery(cursor, command):
 
     resultList = []
     for row in result:
-        resultList.append(list(row))
+        listRow = (list(row))
+        for index, item in enumerate(listRow):
+            if (type(item) == datetime.datetime):
+                listRow[index] = unix_time_millis(item)
+        resultList.append(listRow)
 
     return resultList
+    
+
+def unix_time_millis(dt):
+    return (dt - epoch).total_seconds() * 1000.0
 
 @app.route('/_get_avgAgePerState')
 def get_avgAgePerState():
@@ -292,39 +281,3 @@ def get_avgTatPHLLab():
 @app.route('/_get_avgTatUNIONLab')
 def get_avgTatUNIONLab():
     return jsonify(result=cachedResults['avgTatUNIONLab'])
-
-"""
-@app.route('/_get_result')
-def get_result():
-    cacheName = request.args.get('cacheName', 0, type=str)
-
-    if cacheName in cachedResults:
-        resultsList = cachedResults[cacheName]
-    else:
-        resultsList = []
-
-    print ('Cached Results:')
-    pprint(resultsList)
-    print('\n')
-    return jsonify(result=resultsList)
-"""
-
-@app.route('/contact')
-def contact():
-    """Renders the contact page."""
-    return render_template(
-        'contact.html',
-        title='Contact',
-        year=datetime.now().year,
-        message='Your contact page.'
-    )
-
-@app.route('/about')
-def about():
-    """Renders the about page."""
-    return render_template(
-        'about.html',
-        title='About',
-        year=datetime.now().year,
-        message='Your application description page.'
-    )
