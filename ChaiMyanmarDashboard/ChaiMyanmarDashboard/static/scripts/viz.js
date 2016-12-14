@@ -7,10 +7,10 @@ var eidlegend = ['Positive', 'Indeterminate', 'Negative', 'Rejected']
 
 
 $.when(avgAgePerStateP,avgAgePerTownP,avgAgePerProvinceP,avgAgePerFacilityNameP,avgAgePerFacilityTypeP,eidTestResultTotalP,eidTestResultAIDSTFacilityTypeP,eidTestResultAMIFacilityTypeP,eidTestResultDisHFacilityTypeP,eidTestResultGenHFacilityTypeP,eidTestResultMSFHFacilityTypeP,eidTestResultNHLFacilityTypeP,eidTestResultSpHFacilityTypeP,eidTestResultSRHFacilityTypeP,eidTestResultTHFacilityTypeP,avgTatTotalP,avgTatAIDSTFacilityTypeP,avgTatAMIFacilityTypeP,avgTatDisHFacilityTypeP,avgTatGenHFacilityTypeP,avgTatMSFHFacilityTypeP,avgTatNHLFacilityTypeP,avgTatSpHFacilityTypeP,avgTatSRHFacilityTypeP,avgTatTHFacilityTypeP,avgAgeNHLP,avgAgePHLP,avgAgeUNIONP,eidTestResultNHLLabP,eidTestResultPHLLabP,eidTestResultUNIONLabP,avgTatNHLLabP,avgTatPHLLabP,avgTatUNIONLabP).then(function(avgAgePerState,avgAgePerTown,avgAgePerProvince,avgAgePerFacilityName,avgAgePerFacilityType,eidTestResultTotal,eidTestResultAIDSTFacilityType,eidTestResultAMIFacilityType,eidTestResultDisHFacilityType,eidTestResultGenHFacilityType,eidTestResultMSFHFacilityType,eidTestResultNHLFacilityType,eidTestResultSpHFacilityType,eidTestResultSRHFacilityType,eidTestResultTHFacilityType,avgTatTotal,avgTatAIDSTFacilityType,avgTatAMIFacilityType,avgTatDisHFacilityType,avgTatGenHFacilityType,avgTatMSFHFacilityType,avgTatNHLFacilityType,avgTatSpHFacilityType,avgTatSRHFacilityType,avgTatTHFacilityType,avgAgeNHL,avgAgePHL,avgAgeUNION,eidTestResultNHLLab,eidTestResultPHLLab,eidTestResultUNIONLab,avgTatNHLLab,avgTatPHLLab,avgTatUNIONLab){
-    var test = Object.values(avgAgePerState);
+    //var test = Object.values(avgAgePerState);
 
-    console.log(avgAgePerState[0].result);
-    console.log(eidTestResultAIDSTFacilityType[0].result)
+    //console.log(avgTatTotal[0].result);
+    //console.log(eidTestResultAIDSTFacilityType[0].result)
 
 /*----------data formatter------*/
 
@@ -73,14 +73,16 @@ labTat.push(
   'value': parseDateDiff(avgTatNHLLab[0].result)
   },
   {'entity': 'PHL',
-  'value': 0//parseDateDiff(avgTatPHLLab)
+  'value': 0//parseDateDiff(avgTatPHLLab)   PHL data not available
   },
   {'entity': 'UNION',
-  'value': 0//parseDateDiff(avgTatUNIONLab)
+  'value': 0//parseDateDiff(avgTatUNIONLab) UNION data not available
   }
 );
 
-facilityTat.push( //最后的结果数列得到了date diff的结果
+
+
+facilityTat.push(
   {'entity': 'Total',
   'value': parseDateDiff(avgTatTotal[0].result)
   },
@@ -114,6 +116,7 @@ facilityTat.push( //最后的结果数列得到了date diff的结果
 )
 
 
+
 /* -----avg age for lab--------*/
 var labAge = [];
 function parseLabAge(matrix){
@@ -124,8 +127,8 @@ function parseLabAge(matrix){
 }
 
 parseLabAge(avgAgeNHL);
-//parseLabAge(avgAgePHL);
-//parseLabAge(avgAgeUNION);
+//parseLabAge(avgAgePHL); //PHL data not availbale
+//parseLabAge(avgAgeUNION); //UNION data not available
 
 
 /* -------avg age for region --------- */
@@ -194,38 +197,46 @@ function parseFacilityAge(matrix){
 parseStateAge(avgAgePerState);
 parseProvinceAge(avgAgePerProvince);
 parseTownAge(avgAgePerTown);
-parseFacilityAge(avgAgePerFacilityType);
+
 
 --*/
 
+parseFacilityAge(avgAgePerFacilityType[0].result);
 
+
+var positive = 0, indeterminate = 0, negative = 0, rejected = 0;
 /* ------ eid test result data formatter -------- */
-function parseEid(matrix){
-  var positive, indeterminate, negative, rejected = 0;
-  matrix.forEach(function(array){
-    var resultType = array[0];
-    var value = array[1];
-    switch(resultType){
-      case 'Positive':
-      positive += value ;
-      case 'Indeterminate':
-      indeterminate += value;
-      case 'Negative':
-      negative += value;
-      case 'Rejected':
-      negative += value;
-      case 'Detected':
-      positive += value;
-      case 'Not Detected':
-      negative += value;
-      default:
-      break
-    }//finish loop per row to detect which type it is
+function parseEid(matrix) {
+      positive = 0, indeterminate = 0, negative = 0, rejected = 0;
+      matrix.forEach(function(array){
+      var resultType = array[0];
+      resultType = $.trim(resultType)
+      console.log(resultType);
+      var value = parseInt(array[1]);
+      console.log("value:")
+      console.log(value);
+      if (resultType === 'Positive') {
+          positive = positive + value;
+      } else if (resultType === 'Indeterminate') {
+          indeterminate += value;
+      } else if (resultType === 'Negative') {
+          negative += value;
+      } else if (resultType === 'Rejected') {
+          negative += value;
+      } else if (resultType === 'Detected') {
+          positive += value;
+      } else if (resultType === 'Not Detected') {
+          negative += value;
+      }
+    //finish loop per row to detect which type it is
   })//finish loop the matrix for per entity
-  return [positive, indeterminate, negative, rejected];
+  result = [positive, indeterminate, negative, rejected];
+  console.log("result")
+  console.log(result);
+  return result
 }
 
-var EIDfacility, EIDlab = [
+var EIDfacility = [
     [//positive
         //{ x: 0, y: 5 } x for index, y for value
     ],
@@ -242,19 +253,42 @@ var EIDfacility, EIDlab = [
     ]
 ];
 
+
+var EIDlab = [
+    [//positive
+        //{ x: 0, y: 5 } x for index, y for value
+    ],
+    //ind
+    [
+
+    ],
+    //negative
+    [
+
+    ],
+    [//rejected
+
+    ]
+];
+
+
+
+
 function constructEIDfaciliy(array){//parameter is the parseEID function, which eventually is the return value of the parse function
   var positive = array[0];
   var negative = array[1];
   var indeterminate = array[2];
   var rejected = array[3];
-
+  
   var xindex = EIDfacility[0].length;
+  
+  
   if (xindex=0){
     x = 0
   }else{
     x = xindex;
   }
-
+  
   EIDfacility[0].push({'x': x, 'y':positive});
   EIDfacility[1].push({'x': x, 'y':negative});
   EIDfacility[2].push({'x': x, 'y':indeterminate});
@@ -281,6 +315,8 @@ function constructEIDlab(array){//parameter is the parseEID function, which even
   EIDlab[3].push({'x': x, 'y':rejected});
 }
 
+
+
 //call construction function to get formatted data for all data points to generate d3 graph
 constructEIDfaciliy(parseEid(eidTestResultTotal[0].result));
 constructEIDfaciliy(parseEid(eidTestResultAIDSTFacilityType[0].result));
@@ -298,6 +334,8 @@ constructEIDlab(parseEid(eidTestResultNHLLab[0].result));
 constructEIDlab(parseEid(eidTestResultPHLLab[0].result));
 constructEIDlab(parseEid(eidTestResultUNIONLab[0].result));
 
+console.log(parseEid(eidTestResultTotal[0].result));
+
 
 /*------end of data formatter-------*/
 
@@ -314,20 +352,27 @@ var resultColors = d3.scale.ordinal()
 
 // var div = d3.select('#viz-avg-tat').append('div').attr('class', 'toolTip');
 
+var tatentitycount = 1;
+
+
 var axisMargin = 5,
     margin = 45,
     valueMargin = 5,
     width = 960,
     barHeight = 20,
     barPadding = 20,
-    height = 6*(barHeight*data.length+barPadding)+margin*2, //height for tat canvas
-    data, bar, tatCanvas, scale, xAxis = 0,
+    height = 6 * (barHeight * facilityCount + barPadding) + margin * 2, //height for tat canvas
+    data = 0,
+    bar = 0,
+    tatCanvas = 0,
+    scale = 0,
+    xAxis = 0,
     labelWidth = 40;
 
 
 var max = function(){ //find the max length of the rects
   var maxData = 0
-  data.forEach(function(i){
+  facilityTat.forEach(function(i){
     if (Math.max(...i.value) >= maxData){
       maxData = Math.max(...i.value);
     }
@@ -425,7 +470,7 @@ function agerender(dataset, entityCount, labels){
       })
       .append('text')
       .text(function(d,i){
-        return d.entity;
+        return d;
       })
       .attr('dy','.35em')
       .attr('transform', function(d, i) {
@@ -705,7 +750,7 @@ function rendertat(data){
       })
       .attr('labelWidth', labelWidth);
 
-  renderbar();
+  
   };
 /*-----end of tat--------*/
 
@@ -730,10 +775,11 @@ function rendertat(data){
     }
   };
 
-  rendertat(labTat)
-  agerender(labAge, 3, lablabel);
-  eidrender(EIDlab, 3);
-  fillColor(labTat);
+  rendertat(facilityTat)
+  renderbar(facilityTat);
+  agerender(facilityAge, facilityCount, facilitylable);
+  eidrender(EIDfacility, facilityCount);
+  fillColor(facilityTat);
 
 });
 
