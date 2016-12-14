@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Summary</title>
+    <link rel="stylesheet" href="/static/scripts/bootstrap.min.css">  <!--bootstrap for styling-->
+    <style>
+
+    #viz-avg-tat {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        /*width: 960px;*/
+        /*height: 700px;*/
+        position: relative;
+    }
+
+    h1{
+        margin-bottom: 5%;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        position: center;
+    }
+
+    .toolTip {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 white;
+        border: 0 none;
+        border-radius: 8px 8px 8px 8px;
+        box-shadow: -3px 3px 15px #888888;
+        color: black;
+        font: 12px sans-serif;
+        padding: 5px;
+        text-align: center;
+    }
+
+    text {
+        font: 15px sans-serif;
+        color: black;
+    }
+    text.value {
+        font-size: 120%;
+        fill: white;
+    }
+
+    text.result {
+        font-size: 120%;
+        fill: black;
+        z-index: 2;
+    }
+
+
+    .axisHorizontal path{
+        fill: none;
+    }
+
+    .axisHorizontal .tick line {
+        stroke-width: 1;
+        stroke: rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+
+    <script src="/static/scripts/jquery-2.2.3.js"></script> <!--jQuery-->
+    <script src="/static/scripts/d3.js"></script> 
+    <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type="text/javascript">
+
+        var avgAgePerState = 0;
+
+
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        ///////////////////////////////////////////// Query imports /////////////////////////////////////////////////////
+        var avgTatTotal = 0;
+        var avgAgePerStateP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerState', {}, function(data) {
+            avgAgePerState = data.result
+            console.log(avgAgePerState);
+        });
+            
+        var avgAgePerTownP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerTown', {}, function(data) {
+            avgAgePerTown = data.result
+        });
+            
+        var avgAgePerProvinceP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerProvince', {}, function(data) {
+            avgAgePerProvince = data.result
+        });
+            
+        var avgAgePerFacilityNameP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerFacilityName', {}, function(data) {
+            avgAgePerFacilityName = data.result
+        });
+            
+        var avgAgePerFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerFacilityType', {}, function(data) {
+            avgAgePerFacilityType = data.result
+        });
+
+        var eidTestResultTotalP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultTotal', {}, function(data) {
+            eidTestResultTotal = data.result
+        });
+
+        var eidTestResultAIDSTFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultAIDSTFacilityType', {}, function(data) {
+            eidTestResultAIDSTFacilityType = data.result
+        });
+
+        var eidTestResultAMIFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultAMIFacilityType', {}, function(data) {
+            eidTestResultAMIFacilityType = data.result
+        });
+
+        var eidTestResultDisHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultDisHFacilityType', {}, function(data) {
+            eidTestResultDisHFacilityType = data.result
+        });
+
+        var eidTestResultGenHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultGenHFacilityType', {}, function(data) {
+            eidTestResultGenHFacilityType = data.result
+        });
+
+        var eidTestResultMSFHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultMSFHFacilityType', {}, function(data) {
+            eidTestResultMSFHFacilityType = data.result
+        });
+
+        var eidTestResultNHLFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultNHLFacilityType', {}, function(data) {
+            eidTestResultNHLFacilityType = data.result
+        });
+            
+        var eidTestResultSpHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultSpHFacilityType', {}, function(data) {
+            eidTestResultSpHFacilityType = data.result
+        });
+
+        var eidTestResultSRHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultSRHFacilityType', {}, function(data) {
+            eidTestResultSRHFacilityType = data.result
+        });
+
+        var eidTestResultTHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultTHFacilityType', {}, function(data) {
+            eidTestResultTHFacilityType = data.result
+        });
+            
+
+
+        var avgTatTotalP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatTotal', {}, function(data) {
+            avgTatTotal = data.result
+        });
+
+        var avgTatAIDSTFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatAIDSTFacilityType', {}, function(data) {
+            avgTatAIDSTFacilityType = data.result
+        });
+            
+
+        var avgTatAMIFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatAMIFacilityType', {}, function(data) {
+            avgTatAMIFacilityType = data.result
+        });
+
+        var avgTatDisHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatDisHFacilityType', {}, function(data) {
+            avgTatDisHFacilityType = data.result
+        });
+
+        var avgTatGenHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatGenHFacilityType', {}, function(data) {
+            avgTatGenHFacilityType = data.result
+        });
+
+        var avgTatMSFHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatMSFHFacilityType', {}, function(data) {
+            avgTatMSFHFacilityType = data.result
+        });
+
+        var avgTatNHLFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatNHLFacilityType', {}, function(data) {
+            avgTatNHLFacilityType = data.result
+        });
+
+        var avgTatSpHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatSpHFacilityType', {}, function(data) {
+            avgTatSpHFacilityType = data.result
+        });
+            
+
+        var avgTatSRHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatSRHFacilityType', {}, function(data) {
+            avgTatSRHFacilityType = data.result
+        });
+
+        var avgTatTHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatTHFacilityType', {}, function(data) {
+            avgTatTHFacilityType = data.result
+        });
+
+
+        $.getJSON($SCRIPT_ROOT + '/_get_trackSample', {}, function(data) {
+            trackSample = data.result
+        });
+
+
+        var avgAgeNHLP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgeNHL', {}, function(data) {
+            avgAgeNHL = data.result
+        });
+
+
+        var avgAgePHLP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePHL', {}, function(data) {
+            avgAgePHL = data.result
+        });
+            
+        var avgAgeUNIONP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgeUNION', {}, function(data) {
+            avgAgeUNION = data.result
+        });
+
+        var eidTestResultNHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultNHLLab', {}, function(data) {
+            eidTestResultNHLLab = data.result
+        });
+            
+        var eidTestResultPHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultPHLLab', {}, function(data) {
+            eidTestResultPHLLab = data.result
+        });
+            
+        var eidTestResultUNIONLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultUNIONLab', {}, function(data) {
+            eidTestResultUNIONLab = data.result
+        });
+            
+        var avgTatNHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatNHLLab', {}, function(data) {
+            avgTatNHLLab = data.result
+        });
+        var avgTatPHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatPHLLab', {}, function(data) {
+            avgTatPHLLab = data.result
+        });
+            
+        var avgTatUNIONLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatUNIONLab', {}, function(data) {
+            avgTatUNIONLab = data.result
+        });       
+ 
+    </script>
+
+
+
+
+</head>
+
+<body class="container"> <!-- content -->
+
+
+    <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="index.html">Lab Performance</a></li>
+        <li role="presentation"><a href="state.html">State</a></li>
+        <li role="presentation"><a href="track.html">Facility Performance</a></li>
+    </ul>
+
+    <h1>Lab Performance</h1>
+    <main>
+        <div class="panel panel-default">
+            <div class="panel-heading">EID Results</div>
+            <div class = "legend" id ="legend-eid-result"></div>
+            <div class = "canvas" id ="viz-eid-result">
+            <!-- viz goes here -->
+            
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Average Turnaround Time</div>
+            <div class = "legend" id ="legend-avg-tat"></div>
+            <div class = "canvas" id ="viz-avg-tat">
+            <!-- viz goes here -->
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Average Age</div>
+            <div class = "legend" id ="legend-avg-age"></div>
+            <div class = "canvas" id ="viz-avg-age">
+            <!-- viz goes here -->
+            </div>
+        </div>
+    </main>
+
+
+    <script src="/static/scripts/dashboard.js"></script>
+    <script src="/static/scripts/viz.js"></script>
+    
+    <!---
+    <script type="text/javascript">
+    rendertat(labTat)
+    agerender(labAge, 3, lablabel);
+    eidrender(EIDlab, 3);
+    fillColor(labTat);
+    </script>
+        -->
+
+
+    <!--
+    <script src="visualization.js"></script> -->
+    <script type="text/javascript">
+
+
+            rendertat(labTat)
+            agerender(labAge, 3, lablabel);
+            eidrender(EIDlab, 3);
+            fillColor(labTat);
+
+
+
+
+    </script>
+
+</body>
+</html>

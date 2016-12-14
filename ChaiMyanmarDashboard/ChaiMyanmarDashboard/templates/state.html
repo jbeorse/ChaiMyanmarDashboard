@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Summary</title>
+    <link rel="stylesheet" href="/static/scripts/bootstrap.min.css">  <!--bootstrap for styling-->
+    <style>
+
+    #viz-avg-tat {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        /*width: 960px;*/
+        /*height: 700px;*/
+        position: relative;
+    }
+
+    h1{
+        margin-bottom: 5%;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        position: center;
+    }
+
+    .toolTip {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 white;
+        border: 0 none;
+        border-radius: 8px 8px 8px 8px;
+        box-shadow: -3px 3px 15px #888888;
+        color: black;
+        font: 12px sans-serif;
+        padding: 5px;
+        text-align: center;
+    }
+
+    text {
+        font: 15px sans-serif;
+        color: black;
+    }
+    text.value {
+        font-size: 120%;
+        fill: white;
+    }
+
+    text.result {
+        font-size: 120%;
+        fill: black;
+        z-index: 2;
+    }
+
+
+    .axisHorizontal path{
+        fill: none;
+    }
+
+    .axisHorizontal .tick line {
+        stroke-width: 1;
+        stroke: rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+
+    <script src="/static/scripts/jquery-2.2.3.js"></script> <!--jQuery-->
+    <script src="/static/scripts/d3.js"></script> 
+    <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type="text/javascript">
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            ///////////////////////////////////////////// Query imports /////////////////////////////////////////////////////
+
+            var avgAgePerStateP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerState', {}, function(data) {
+                avgAgePerState = data.result
+                $("#avgAgePerState").text(avgAgePerState);
+            });
+            
+            var avgAgePerTownP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerTown', {}, function(data) {
+                avgAgePerTown = data.result
+                $("#avgAgePerTown").text(avgAgePerTown);
+            });
+            
+            var avgAgePerProvinceP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerProvince', {}, function(data) {
+                avgAgePerProvince = data.result
+                $("#avgAgePerProvince").text(avgAgePerProvince);
+            });
+            
+            var avgAgePerFacilityNameP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerFacilityName', {}, function(data) {
+                avgAgePerFacilityName = data.result
+                $("#avgAgePerFacilityName").text(avgAgePerFacilityName);
+            });
+            
+            var avgAgePerFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePerFacilityType', {}, function(data) {
+                avgAgePerFacilityType = data.result
+                $("#avgAgePerFacilityType").text(avgAgePerFacilityType);
+            });
+
+            var eidTestResultTotalP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultTotal', {}, function(data) {
+                eidTestResultTotal = data.result
+                $("#eidTestResultTotal").text(eidTestResultTotal);
+            });
+
+            var eidTestResultAIDSTFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultAIDSTFacilityType', {}, function(data) {
+                eidTestResultAIDSTFacilityType = data.result
+                $("#eidTestResultAIDSTFacilityType").text(eidTestResultAIDSTFacilityType);
+            });
+
+            var eidTestResultAMIFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultAMIFacilityType', {}, function(data) {
+                eidTestResultAMIFacilityType = data.result
+                $("#eidTestResultAMIFacilityType").text(eidTestResultAMIFacilityType);
+            });
+
+            var eidTestResultDisHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultDisHFacilityType', {}, function(data) {
+                eidTestResultDisHFacilityType = data.result
+                $("#eidTestResultDisHFacilityType").text(eidTestResultDisHFacilityType);
+            });
+
+            var eidTestResultGenHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultGenHFacilityType', {}, function(data) {
+                eidTestResultGenHFacilityType = data.result
+                $("#eidTestResultGenHFacilityType").text(eidTestResultGenHFacilityType);
+            });
+
+            var eidTestResultMSFHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultMSFHFacilityType', {}, function(data) {
+                eidTestResultMSFHFacilityType = data.result
+                $("#eidTestResultMSFHFacilityType").text(eidTestResultMSFHFacilityType);
+            });
+
+            var eidTestResultNHLFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultNHLFacilityType', {}, function(data) {
+                eidTestResultNHLFacilityType = data.result
+                $("#eidTestResultNHLFacilityType").text(eidTestResultNHLFacilityType);
+            });
+            
+            var eidTestResultSpHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultSpHFacilityType', {}, function(data) {
+                eidTestResultSpHFacilityType = data.result
+                $("#eidTestResultSpHFacilityType").text(eidTestResultSpHFacilityType);
+            });
+
+            var eidTestResultSRHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultSRHFacilityType', {}, function(data) {
+                eidTestResultSRHFacilityType = data.result
+                $("#eidTestResultSRHFacilityType").text(eidTestResultSRHFacilityType);
+            });
+
+            var eidTestResultTHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultTHFacilityType', {}, function(data) {
+                eidTestResultTHFacilityType = data.result
+                $("#eidTestResultTHFacilityType").text(eidTestResultTHFacilityType);
+            });
+            
+
+
+            var avgTatTotalP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatTotal', {}, function(data) {
+                avgTatTotal = data.result
+                $("#avgTatTotal").text(avgTatTotal);
+            });
+
+            var avgTatAIDSTFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatAIDSTFacilityType', {}, function(data) {
+                avgTatAIDSTFacilityType = data.result
+                $("#avgTatAIDSTFacilityType").text(avgTatAIDSTFacilityType);
+            });
+            
+
+            var avgTatAMIFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatAMIFacilityType', {}, function(data) {
+                avgTatAMIFacilityType = data.result
+                $("#avgTatAMIFacilityType").text(avgTatAMIFacilityType);
+            });
+
+            var avgTatDisHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatDisHFacilityType', {}, function(data) {
+                avgTatDisHFacilityType = data.result
+                $("#avgAavgTatDisHFacilityTypegePerState").text(avgTatDisHFacilityType);
+            });
+
+            var avgTatGenHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatGenHFacilityType', {}, function(data) {
+                avgTatGenHFacilityType = data.result
+                $("#avgTatGenHFacilityType").text(avgTatGenHFacilityType);
+            });
+
+            var avgTatMSFHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatMSFHFacilityType', {}, function(data) {
+                avgTatMSFHFacilityType = data.result
+                $("#avgTatMSFHFacilityType").text(avgTatMSFHFacilityType);
+            });
+
+            var avgTatNHLFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatNHLFacilityType', {}, function(data) {
+                avgTatNHLFacilityType = data.result
+                $("#avgTatNHLFacilityType").text(avgTatNHLFacilityType);
+            });
+
+            var avgTatSpHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatSpHFacilityType', {}, function(data) {
+                avgTatSpHFacilityType = data.result
+                $("#avgTatSpHFacilityType").text(avgTatSpHFacilityType);
+            });
+            
+
+            var avgTatSRHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatSRHFacilityType', {}, function(data) {
+                avgTatSRHFacilityType = data.result
+                $("#avgTatSRHFacilityType").text(avgTatSRHFacilityType);
+            });
+
+            var avgTatTHFacilityTypeP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatTHFacilityType', {}, function(data) {
+                avgTatTHFacilityType = data.result
+                $("#avgTatTHFacilityType").text(avgTatTHFacilityType);
+            });
+
+
+            $.getJSON($SCRIPT_ROOT + '/_get_trackSample', {}, function(data) {
+                trackSample = data.result
+                $("#trackSample").text(trackSample);
+            });
+
+
+            var avgAgeNHLP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgeNHL', {}, function(data) {
+                avgAgeNHL = data.result
+                $("#avgAgeNHL").text(avgAgeNHL);
+            });
+
+
+            var avgAgePHLP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgePHL', {}, function(data) {
+                avgAgePHL = data.result
+                $("#avgAgePHL").text(avgAgePHL);
+            });
+            
+            var avgAgeUNIONP = $.getJSON($SCRIPT_ROOT + '/_get_avgAgeUNION', {}, function(data) {
+                avgAgeUNION = data.result
+                $("#avgAgeUNION").text(avgAgeUNION);
+            });
+
+            var eidTestResultNHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultNHLLab', {}, function(data) {
+                eidTestResultNHLLab = data.result
+                $("#eidTestResultNHLLab").text(eidTestResultNHLLab);
+            });
+            
+            var eidTestResultPHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultPHLLab', {}, function(data) {
+                eidTestResultPHLLab = data.result
+                $("#eidTestResultPHLLab").text(eidTestResultPHLLab);
+            });
+            
+            var eidTestResultUNIONLabP = $.getJSON($SCRIPT_ROOT + '/_get_eidTestResultUNIONLab', {}, function(data) {
+                eidTestResultUNIONLab = data.result
+                $("#eidTestResultUNIONLab").text(eidTestResultUNIONLab);
+            });
+            
+            var avgTatNHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatNHLLab', {}, function(data) {
+                avgTatNHLLab = data.result
+                $("#avgTatNHLLab").text(avgTatNHLLab);
+            });
+            var avgTatPHLLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatPHLLab', {}, function(data) {
+                avgTatPHLLab = data.result
+                $("#avgTatPHLLab").text(avgTatPHLLab);
+            });
+            
+            var avgTatUNIONLabP = $.getJSON($SCRIPT_ROOT + '/_get_avgTatUNIONLab', {}, function(data) {
+                avgTatUNIONLab = data.result
+                $("#avgTatUNIONLab").text(avgTatUNIONLab);
+            });
+ 
+    </script>
+
+
+
+
+</head>
+
+<body class="container"> <!-- content -->
+
+
+    <ul class="nav nav-pills">
+        <li role="presentation"><a href="index.html">Lab Performance</a></li>
+        <li role="presentation" class="active"><a href="state.html">State</a></li>
+        <li role="presentation"><a href="track.html">Facility Performance</a></li>
+    </ul>
+
+    <h1>State</h1>
+    <main>
+        <div class="panel panel-default">
+            <div class="panel-heading">EID Results</div>
+            <div class = "legend" id ="legend-eid-result"></div>
+            <div class = "canvas" id ="viz-eid-result">
+            <!-- viz goes here -->
+            
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Average Turnaround Time</div>
+            <div class = "legend" id ="legend-avg-tat"></div>
+            <div class = "canvas" id ="viz-avg-tat">
+            <!-- viz goes here -->
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Average Age</div>
+            <div class = "legend" id ="legend-avg-age"></div>
+            <div class = "canvas" id ="viz-avg-age">
+            <!-- viz goes here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/scripts/dashboard.js"></script>
+    <script src="/static/scripts/viz.js"></script>
+    <script type="text/javascript">
+    rendertat(labTat)
+    agerender(stateAge, stateCount, statelable);
+    fillColor(labTat);
+    </script>
+
+
+    <!--
+    <script src="visualization.js"></script> -->
+
+</body>
+</html>

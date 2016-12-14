@@ -111,11 +111,10 @@ def home():
     cachedResults['avgTatNHLLab'] = runQuery(cursor, avgTatNHLLabCommand)
     cachedResults['avgTatPHLLab'] = runQuery(cursor, avgTatPHLLabCommand)
     cachedResults['avgTatUNIONLab'] = runQuery(cursor, avgTatUNIONLabCommand)
-    """ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO: Convert all dates to epoch times !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
 
     connection.close()
 
-    return render_template('dashboard.html')
+    return render_template('index.html')
         
 def runQuery(cursor, command):
     cursor.execute(command)
